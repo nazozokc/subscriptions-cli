@@ -16,7 +16,7 @@ const dir = path.join(
   homedir(),
   ".config",
   "subscription-cli",
-  "subscriptin.json",
+    "subscription.json",
 );
 
 export const getSubscriptions = (): SharedArgs[] => {

@@ -1,15 +1,53 @@
 # subsc-cli
 
-To install dependencies:
+A CLI tool to manage your subscription services from the terminal.
+
+## Features
+
+- List all subscriptions in a formatted table
+- Add a subscription interactively (name, price, currency, cycle, tags)
+- Delete a subscription by ID
+
+## Usage
+
+```bash
+# List all subscriptions
+bunx sb list
+
+# Add a new subscription (interactive prompts)
+bunx sb add
+
+# Delete a subscription by ID
+bunx sb delete <id>
+```
+
+> [!TIP]
+> The binary name is `sb`. Run via `bunx sb <command>` after `bun install`.
+
+## Data
+
+Subscriptions are stored in `~/.config/subscription-cli/subscription.json`.
+
+## Development
+
+```bash
+# Install dependencies
+bun install
+
+# Run directly
+bun run src/index.ts
+```
+
+## Install
 
 ```bash
 bun install
 ```
 
-To run:
+Then link globally if you want:
 
 ```bash
-bun run index.ts
+bun link
 ```
 
-This project was created using `bun init` in bun v1.3.13. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Now you can use `sb` directly from anywhere.
