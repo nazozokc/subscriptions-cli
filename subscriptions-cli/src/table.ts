@@ -24,5 +24,18 @@ export const spreadSubscription = (): void => {
     ]);
   }
 
+  const jpytotal = list
+    .filter((n) => n.currency === "USD")
+    .reduce((sum, n) => sum + n.price, 0);
+
+  const usdtotal = list
+    .filter((n) => n.currency === "JPY")
+    .reduce((sum, n) => sum + n.price, 0);
+
+  table.push(
+    ["", "", "JPY TOTAL", `\\${jpytotal}`],
+    ["", "", "USD TOTAL", `$${usdtotal}`],
+  );
+
   consola.log(table.toString());
 };
