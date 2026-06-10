@@ -9,7 +9,7 @@ import {
 
 const runCLI = () => {
   const program = new Command();
-  program.name("sb");
+  program.name("subsc-cli");
 
   program.command("list").action(() => {
     spreadSubscription();

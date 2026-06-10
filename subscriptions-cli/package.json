@@ -4,7 +4,7 @@
   "module": "index.ts",
   "type": "module",
   "bin": {
-    "sb": "./dist/index.mjs"
+    "subsc-cli": "./dist/index.mjs"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -15,7 +15,7 @@
   "dependencies": {
     "@inquirer/prompts": "^8.5.2",
     "cli-table3": "^0.6.5",
-    "commander": "^14.0.3",
+    "commander": "^15.0.0",
     "consola": "^3.4.2",
     "fs": "^0.0.1-security",
     "os": "^0.1.2",
