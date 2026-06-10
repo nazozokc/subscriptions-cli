@@ -1,8 +1,12 @@
 {
-  "name": "subsc-cli",
+  "name": "subscriptions-cli",
+  "version": "v0.1.0",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "bin": {
+    "sb": "./dist/index.mjs"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
