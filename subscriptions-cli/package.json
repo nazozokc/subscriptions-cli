@@ -1,13 +1,9 @@
 {
   "name": "subscriptions-cli",
-  "version": "0.2.1",
-  "module": "index.ts",
+  "version": "0.2.2",
   "type": "module",
   "bin": {
     "subsc-cli": "./dist/index.mjs"
-  },
-  "exports": {
-    ".": "./dist/index.mjs"
   },
   "devDependencies": {
     "@types/bun": "latest",
