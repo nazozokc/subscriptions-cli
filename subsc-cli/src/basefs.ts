@@ -16,7 +16,7 @@ const dir = path.join(
   homedir(),
   ".config",
   "subscription-cli",
-    "subscription.json",
+  "subscription.json",
 );
 
 export const getSubscriptions = (): SharedArgs[] => {
@@ -43,4 +43,9 @@ export const deleteSubscription = (id: number) => {
   const get = getSubscriptions();
   const filter = get.filter((n) => n.id !== id);
   writeSubscription(filter);
+};
+
+export const tagsSubscription = (tags: string[]): SharedArgs[] => {
+  const get = getSubscriptions();
+  const filter = get.filter((n) => n.tags === tags);
 };

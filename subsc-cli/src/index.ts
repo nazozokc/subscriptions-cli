@@ -41,9 +41,14 @@ const runCLI = () => {
       ],
     });
 
-    const tag = await input({
+    const tagsInput = await input({
       message: "tags",
     });
+
+    const tag = tagsInput
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
 
     const get = getSubscriptions();
     get.push({
