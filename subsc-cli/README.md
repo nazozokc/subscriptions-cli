@@ -1,4 +1,4 @@
-# subscriptions-cli
+# subsc-cli
 
 A CLI tool to manage your subscription services from the terminal.
 
