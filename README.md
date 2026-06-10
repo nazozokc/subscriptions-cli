@@ -1,0 +1,1 @@
+./subscriptions-cli/README.md
