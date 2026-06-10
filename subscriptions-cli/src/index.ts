@@ -5,7 +5,7 @@ import {
   deleteSubscription,
   getSubscriptions,
   writeSubscription,
-} from "./fs.ts";
+} from "./basefs.ts";
 
 const runCLI = () => {
   const program = new Command();
