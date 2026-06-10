@@ -6,6 +6,9 @@
   "bin": {
     "subsc-cli": "./dist/index.mjs"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "tsdown": "^0.22.2"
