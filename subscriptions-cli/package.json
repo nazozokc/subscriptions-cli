@@ -6,8 +6,12 @@
   "bin": {
     "subsc-cli": "./dist/index.mjs"
   },
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "tsdown": "^0.22.2"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -19,7 +23,6 @@
     "consola": "^3.4.2",
     "fs": "^0.0.1-security",
     "os": "^0.1.2",
-    "table": "^6.9.0",
-    "tsdown": "^0.22.2"
+    "table": "^6.9.0"
   }
 }
