@@ -9,6 +9,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nazozokc/subsc-cli.git"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "tsdown": "^0.22.2"
