@@ -12,13 +12,16 @@ A CLI tool to manage your subscription services from the terminal.
 
 ```bash
 # List all subscriptions
-bunx sb list
+bunx subsc-cli list
 
 # Add a new subscription (interactive prompts)
-bunx sb add
+bunx subsc-cli add
 
 # Delete a subscription by ID
-bunx sb delete <id>
+bunx subsc-cli delete <id>
+
+# List tags subscriptions
+bunx subsc-cli tags <tags>
 ```
 
 > [!TIP]
