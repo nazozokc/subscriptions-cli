@@ -1,6 +1,6 @@
 {
-  "name": "subscriptions-cli",
-  "version": "0.2.3",
+  "name": "subsc-cli",
+  "version": "0.2.4",
   "type": "module",
   "license": "MIT",
   "bin": {
