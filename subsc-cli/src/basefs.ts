@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import Database from "node:better-sqlite3";
 import path from "path";
 import { homedir } from "os";
 
@@ -27,23 +27,28 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 `);
 
 export const getSubscriptions = (): SharedArgs[] => {
-  return db.prepare("SELECT * FROM subscriptions").all()
-}
+  return db.prepare("SELECT * FROM subscriptions").all();
+};
 
-export writeSubscription = (SharedArgs: SharedArgs[]): void => {
+export const writeSubscription = (SharedArgs: SharedArgs[]): void => {
   const int = db.prepare(`
     INSERT INTO subscriptions (name, price currency, cycle)
     VALUES (?, ?, ?, ?)
   `);
 
-  int.run(SharedArgs.name, SharedArgs.price, SharedArgs.currency, SharedArgs.cycle);
+  int.run(
+    SharedArgs.name,
+    SharedArgs.price,
+    SharedArgs.currency,
+    SharedArgs.cycle,
+  );
 };
 
 export const deleteSubscription = (id: number): void => {
   db.prepare(`DELETE FROM subscriptions WHERE id = ?`).run(id);
-}
+};
 
-export const tagsSubscription = (tag: string,): SharedArgs[] => {
+export const tagsSubscription = (tag: string): SharedArgs[] => {
   const stmt = db.prepare(`
     SELECT subscriptions.*
     FROM subscriptions

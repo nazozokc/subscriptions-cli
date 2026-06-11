@@ -51,7 +51,7 @@ const runCLI = () => {
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-    addSubscription({
+    writeSubscription({
       name,
       price: Number(price),
       currency,
