@@ -25,7 +25,7 @@ bunx subsc-cli tags <tags>
 ```
 
 > [!TIP]
-> The binary name is `sb`. Run via `bunx sb <command>` after `bun install`.
+> The binary name is `subsc-cli`. Run via `bunx subsc-cli <command>` after `bun install`.
 
 ## Data
 
