@@ -9,7 +9,6 @@ export type SharedArgs = {
   price: number;
   currency: "JPY" | "USD";
   cycle: "monthly" | "yearly";
-  tags: string[];
 };
 
 //Omit はSharedArgsからidだけ消した型

@@ -42,21 +42,11 @@ const runCLI = () => {
       ],
     });
 
-    const tagsInput = await input({
-      message: "tags",
-    });
-
-    const tag = tagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
-
     writeSubscription({
       name,
       price: Number(price),
       currency,
       cycle,
-      tags: tag,
     });
   });
 
