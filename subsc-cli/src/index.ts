@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { input, select, checkbox } from "@inquirer/prompts";
+import { input, select } from "@inquirer/prompts";
 import { spreadSubscription } from "./table.ts";
 import {
   deleteSubscription,

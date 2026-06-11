@@ -15,13 +15,13 @@ export type SharedArgs = {
 //Omit はSharedArgsからidだけ消した型
 export type AddSharedArgs = Omit<SharedArgs, "id">;
 
-const dbdir = path.join(homedir(), ".config", "subsc-cli", "subscriptions.db");
+const dbdir = path.join(homedir(), ".config", "subsc-cli");
 
 mkdirSync(dbdir, {
   recursive: true,
 });
 
-const db = new DatabaseSync(dbdir);
+const db = new DatabaseSync(path.join(configDir, "subscriptions.db"));
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS subscriptions (
@@ -29,26 +29,21 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   name TEXT NOT NULL,
   price INTEGER NOT NULL,
   currency TEXT NOT NULL,
-  cycle TEXT NOT NULL,
+  cycle TEXT NOT NULL
   );
 `);
 
-export const getSubscriptions = (): SharedArgs[] => {
+export const getSubscriptions = (): SharedArgs => {
   return db.prepare("SELECT * FROM subscriptions").all();
 };
 
-export const writeSubscription = (SharedArgs: AddSharedArgs[]): void => {
+export const writeSubscription = (data: AddSharedArgs): void => {
   const int = db.prepare(`
-    INSERT INTO subscriptions (name, price currency, cycle)
+    INSERT INTO subscriptions (name, price, currency, cycle)
     VALUES (?, ?, ?, ?)
   `);
 
-  int.run(
-    SharedArgs.name,
-    SharedArgs.price,
-    SharedArgs.currency,
-    SharedArgs.cycle,
-  );
+  int.run(data.name, data.price, data.currency, data.cycle);
 };
 
 export const deleteSubscription = (id: number): void => {
