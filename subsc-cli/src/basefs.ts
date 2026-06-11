@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import DatabaseSync from "node:sqlite";
 import path from "path";
 import { homedir } from "os";
 
@@ -14,7 +14,7 @@ export type SharedArgs = {
 export type AddSubscriptionArgs = Omit<SharedArgs, "id">;
 
 const dbdir = path.join(homedir(), ".config", "subsc-cli", "subscriptions.db");
-const db = new Database(dbdir);
+const db = new DatabaseSync(dbdir);
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS subscriptions (
