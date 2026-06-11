@@ -25,6 +25,7 @@
     "cli-table3": "^0.6.5",
     "commander": "^15.0.0",
     "consola": "^3.4.2",
+    "fs": "0.0.1-security",
     "sqlite": "^5.1.1",
     "table": "^6.9.0"
   }

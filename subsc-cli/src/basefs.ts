@@ -1,4 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
+import { mkdirSync } from "node:fs";
 import path from "path";
 import { homedir } from "os";
 
@@ -14,6 +15,11 @@ export type SharedArgs = {
 export type AddSubscriptionArgs = Omit<SharedArgs, "id">;
 
 const dbdir = path.join(homedir(), ".config", "subsc-cli", "subscriptions.db");
+
+mkdirSync(dbdir, {
+  recursive: true,
+});
+
 const db = new DatabaseSync(dbdir);
 
 db.exec(`
