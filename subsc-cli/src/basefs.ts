@@ -1,7 +1,6 @@
-import consola from "consola";
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
-import { homedir } from "os";
+import Database from "better-sqlite3";
 import path from "path";
+import { homedir } from "os";
 
 export type SharedArgs = {
   id: number;
@@ -12,41 +11,46 @@ export type SharedArgs = {
   tags: string[];
 };
 
-const dir = path.join(
-  homedir(),
-  ".config",
-  "subscription-cli",
-  "subscription.json",
-);
+const dbdir = path.join(homedir(), ".config", "subsc-cli", "subscriptions.db");
+const db = new Database(dbdir);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  price INTEGER NOT NULL,
+  currency TEXT NOT NULL,
+  cycle TEXT NOT NULL,
+  );
+`);
 
 export const getSubscriptions = (): SharedArgs[] => {
-  try {
-    const result = readFileSync(dir, "utf-8");
-    return JSON.parse(result).filter(Boolean);
-  } catch (err) {
-    return [];
-  }
+  return db.prepare("SELECT * FROM subscriptions").all()
+}
+
+export writeSubscription = (SharedArgs: SharedArgs[]): void => {
+  const int = db.prepare(`
+    INSERT INTO subscriptions (name, price currency, cycle)
+    VALUES (?, ?, ?, ?)
+  `);
+
+  int.run(SharedArgs.name, SharedArgs.price, SharedArgs.currency, SharedArgs.cycle);
 };
 
-export const writeSubscription = (SharedArgs: SharedArgs[]): void => {
-  mkdirSync(path.dirname(dir), { recursive: true });
-  const json = JSON.stringify(SharedArgs, null, 2);
-  try {
-    writeFileSync(dir, json, "utf-8");
-    consola.success("done add subscription");
-  } catch (error) {
-    consola.error("ファイルを作成することができませんでした");
-  }
-};
+export const deleteSubscription = (id: number): void => {
+  db.prepare(`DELETE FROM subscriptions WHERE id = ?`).run(id);
+}
 
-export const deleteSubscription = (id: number) => {
-  const get = getSubscriptions();
-  const filter = get.filter((n) => n.id !== id);
-  writeSubscription(filter);
-};
+export const tagsSubscription = (tag: string,): SharedArgs[] => {
+  const stmt = db.prepare(`
+    SELECT subscriptions.*
+    FROM subscriptions
+    JOIN subscription_tags
+      ON subscriptions.id = subscription_tags.subscription_id
+    JOIN tags
+      ON tags.id = subscription_tags.tag_id
+    WHERE tags.name = ?
+  `);
 
-export const tagsSubscription = (tags: string[]): SharedArgs[] => {
-  const get = getSubscriptions();
-  const output = get.filter((item) => tags.every((n) => item.tags.includes(n)));
-  return output;
+  return stmt.all(tag) as SharedArgs[];
 };
