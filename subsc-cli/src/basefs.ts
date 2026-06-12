@@ -77,17 +77,32 @@ export const tagsSubscription = (tag: string[] | string) => {
 
   const placeholders = tags.map(() => "?").join(",");
 
+  // ① タグ条件に一致するsubscription_idをまず取る
+  const rows = db
+    .prepare(
+      `
+      SELECT subscription_tags.subscription_id
+      FROM subscription_tags
+      JOIN tags ON tags.id = subscription_tags.tag_id
+      WHERE tags.name IN (${placeholders})
+      GROUP BY subscription_tags.subscription_id
+      HAVING COUNT(DISTINCT tags.name) = ?
+    `,
+    )
+    .all(...tags, tags.length) as { subscription_id: number }[];
+
+  const ids = rows.map((r) => r.subscription_id);
+
+  if (ids.length === 0) return [];
+
+  // ② subscriptions本体を安全に取得
+  const subPlaceholders = ids.map(() => "?").join(",");
+
   const stmt = db.prepare(`
-    SELECT subscriptions.*
+    SELECT *
     FROM subscriptions
-    JOIN subscription_tags
-      ON subscriptions.id = subscription_tags.subscription_id
-    JOIN tags
-      ON tags.id = subscription_tags.tag_id
-    WHERE tags.name IN (${placeholders})
-    GROUP BY subscriptions.id
-    HAVING COUNT(DISTINCT tags.name) = ?
+    WHERE id IN (${subPlaceholders})
   `);
 
-  return stmt.all(...tags, tags.length) as SharedArgs[];
+  return stmt.all(...ids);
 };
