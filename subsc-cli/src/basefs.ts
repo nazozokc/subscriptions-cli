@@ -72,7 +72,7 @@ export const writeSubscription = (data: AddSharedArgs): void => {
     data.cycle,
   );
 
-  const subscriptionId = result.lastInsertRowid;
+  const subscriptionId = Number(result.lastInsertRowid);
 
   const insertTag = db.prepare(`
     INSERT OR IGNORE INTO tags (name)
@@ -88,9 +88,14 @@ export const writeSubscription = (data: AddSharedArgs): void => {
     VALUES (?, ?)
   `);
 
-  for (const t of data.tags) {
+  const tags = data.tags ?? [];
+
+  for (const t of tags) {
     insertTag.run(t);
-    const tagRow = getTagId.get(t) as { id: number };
+
+    const tagRow = getTagId.get(t) as { id: number } | undefined;
+    if (!tagRow) continue;
+
     insertRel.run(subscriptionId, tagRow.id);
   }
 };
@@ -102,9 +107,10 @@ export const deleteSubscription = (id: number): void => {
 export const tagsSubscription = (tag: string[] | string) => {
   const tags = Array.isArray(tag) ? tag : [tag];
 
+  if (tags.length === 0) return [];
+
   const placeholders = tags.map(() => "?").join(",");
 
-  // ① タグ条件に一致するsubscription_idをまず取る
   const rows = db
     .prepare(
       `
@@ -122,13 +128,9 @@ export const tagsSubscription = (tag: string[] | string) => {
 
   if (ids.length === 0) return [];
 
-  // ② subscriptions本体を安全に取得
-  const subPlaceholders = ids.map(() => "?").join(",");
-
   const stmt = db.prepare(`
-    SELECT *
-    FROM subscriptions
-    WHERE id IN (${subPlaceholders})
+    SELECT * FROM subscriptions
+    WHERE id IN (${ids.map(() => "?").join(",")})
   `);
 
   return stmt.all(...ids);
