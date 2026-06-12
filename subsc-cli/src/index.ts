@@ -56,7 +56,7 @@ const runCLI = () => {
       price: Number(price),
       currency,
       cycle,
-      tag,
+      tags: tag,
     });
   });
 
