@@ -69,7 +69,7 @@ const runCLI = () => {
 
   program
     .command("tags")
-    .argument("<...taglist>")
+    .argument("<taglist...>")
     .action((taglist) => {
       const list = tagsSubscription(taglist);
       spreadSubscription(list);
