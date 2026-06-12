@@ -60,12 +60,39 @@ export const getSubscriptions = (): SharedArgs[] => {
 };
 
 export const writeSubscription = (data: AddSharedArgs): void => {
-  const int = db.prepare(`
+  const insertSub = db.prepare(`
     INSERT INTO subscriptions (name, price, currency, cycle)
     VALUES (?, ?, ?, ?)
   `);
 
-  int.run(data.name, data.price, data.currency, data.cycle);
+  const result = insertSub.run(
+    data.name,
+    data.price,
+    data.currency,
+    data.cycle,
+  );
+
+  const subscriptionId = result.lastInsertRowid;
+
+  const insertTag = db.prepare(`
+    INSERT OR IGNORE INTO tags (name)
+    VALUES (?)
+  `);
+
+  const getTagId = db.prepare(`
+    SELECT id FROM tags WHERE name = ?
+  `);
+
+  const insertRel = db.prepare(`
+    INSERT INTO subscription_tags (subscription_id, tag_id)
+    VALUES (?, ?)
+  `);
+
+  for (const t of data.tags) {
+    insertTag.run(t);
+    const tagRow = getTagId.get(t) as { id: number };
+    insertRel.run(subscriptionId, tagRow.id);
+  }
 };
 
 export const deleteSubscription = (id: number): void => {
