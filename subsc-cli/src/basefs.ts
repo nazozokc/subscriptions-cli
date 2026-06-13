@@ -29,6 +29,7 @@ function getDb(): Database {
 
   _db = new Database(path.join(dbdir, "subscriptions.db"));
   _db.pragma("journal_mode = WAL");
+  _db.pragma("foreign_keys = ON");
 
   _db.exec(`
     CREATE TABLE IF NOT EXISTS subscriptions (
@@ -109,42 +110,47 @@ export const getSubscriptions = (): SharedArgs[] => {
 export const writeSubscription = (data: AddSharedArgs): void => {
   try {
     const db = getDb();
+    const uniqueTags = Array.from(new Set(data.tags))
 
-    const insertSub = db.prepare(`
-      INSERT INTO subscriptions (name, price, currency, cycle)
-      VALUES (?, ?, ?, ?)
-    `);
+    const writeTx = db.transaction(() => {
+      const insertSub = db.prepare(`
+        INSERT INTO subscriptions (name, price, currency, cycle)
+        VALUES (?, ?, ?, ?)
+      `);
 
-    const result = insertSub.run(
-      data.name,
-      data.price,
-      data.currency,
-      data.cycle,
-    );
+      const result = insertSub.run(
+        data.name,
+        data.price,
+        data.currency,
+        data.cycle,
+      );
 
-    const subscriptionId = Number(result.lastInsertRowid);
+      const subscriptionId = Number(result.lastInsertRowid);
 
-    const insertTag = db.prepare(`
-      INSERT OR IGNORE INTO tags (name)
-      VALUES (?)
-    `);
+      const insertTag = db.prepare(`
+        INSERT OR IGNORE INTO tags (name)
+        VALUES (?)
+      `);
 
-    const getTagId = db.prepare(`
-      SELECT id FROM tags WHERE name = ?
-    `);
+      const getTagId = db.prepare(`
+        SELECT id FROM tags WHERE name = ?
+      `);
 
-    const insertRel = db.prepare(`
-      INSERT INTO subscription_tags (subscription_id, tag_id)
-      VALUES (?, ?)
-    `);
+      const insertRel = db.prepare(`
+        INSERT INTO subscription_tags (subscription_id, tag_id)
+        VALUES (?, ?)
+      `);
 
-    for (const t of data.tags) {
-      insertTag.run(t);
-      const tagRow = getTagId.get(t) as { id: number } | undefined;
-      if (tagRow) {
-        insertRel.run(subscriptionId, tagRow.id);
+      for (const t of uniqueTags) {
+        insertTag.run(t);
+        const tagRow = getTagId.get(t) as { id: number } | undefined;
+        if (tagRow) {
+          insertRel.run(subscriptionId, tagRow.id);
+        }
       }
-    }
+    });
+
+    writeTx();
   } catch (error) {
     consola.error("Failed to add subscription:", error);
     throw error;
@@ -170,7 +176,7 @@ export const deleteSubscription = (id: number): void => {
 export const tagsSubscription = (tag: string[] | string) => {
   try {
     const db = getDb();
-    const tags = Array.isArray(tag) ? tag : [tag];
+    const tags = Array.from(new Set(Array.isArray(tag) ? tag : [tag]));
     if (tags.length === 0) return [];
 
     const placeholders = tags.map(() => "?").join(",");

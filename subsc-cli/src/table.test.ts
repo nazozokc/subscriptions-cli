@@ -1,6 +1,7 @@
-import { test, expect, beforeEach, afterEach } from "vitest";
-import { consola } from "consola";
-import { spreadSubscription } from "./table";
+import { test, expect, beforeEach, afterEach } from "vitest"
+import { consola } from "consola"
+import { spreadSubscription } from "./table"
+import type { SharedArgs } from "./basefs"
 
 const logMessages: string[] = [];
 const infoMessages: string[] = [];
@@ -22,7 +23,7 @@ afterEach(() => {
   consola.mockTypes();
 });
 
-function makeSub(overrides: Record<string, unknown> = {}) {
+function makeSub(overrides: Partial<SharedArgs> = {}): SharedArgs {
   return {
     id: 1,
     name: "Test Service",
@@ -31,7 +32,7 @@ function makeSub(overrides: Record<string, unknown> = {}) {
     cycle: "monthly",
     tags: [],
     ...overrides,
-  };
+  }
 }
 
 test("shows info message when no subscriptions", () => {

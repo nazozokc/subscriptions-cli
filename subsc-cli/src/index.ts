@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { input, select } from "@inquirer/prompts";
+import { input, select } from "@inquirer/prompts"
 import { spreadSubscription } from "./table.ts";
 import {
   deleteSubscription,
@@ -24,8 +24,11 @@ const runCLI = () => {
     const price = await input({
       message: "monthly payment amount",
       validate: (value) => {
+        if (value.trim() === "") {
+          return "Please enter a valid number";
+        }
         if (isNaN(Number(value)) || Number(value) < 0) {
-          return "Please enter a valid positive number";
+          return "Please enter a valid non-negative number";
         }
         return true;
       },

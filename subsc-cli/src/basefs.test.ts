@@ -4,6 +4,7 @@ import Database from "better-sqlite3";
 // Use an in-memory database for full test isolation
 const testDb = new Database(":memory:");
 testDb.pragma("journal_mode = WAL");
+testDb.pragma("foreign_keys = ON");
 
 // In-memory DB doesn't support CREATE TABLE with the same singleton pattern,
 // so we create the tables here and inject the DB instance.
@@ -171,8 +172,23 @@ test("deleteSubscription cascades to subscription_tags", () => {
   expect(subs).toHaveLength(1);
   expect(subs[0].tags).toHaveLength(2);
 
-  basefs.deleteSubscription(subs[0].id);
+  const subId = subs[0].id;
+  const relCountBefore = (
+    testDb.prepare(
+      "SELECT COUNT(*) as cnt FROM subscription_tags WHERE subscription_id = ?",
+    ).get(subId) as { cnt: number }
+  ).cnt;
+  expect(relCountBefore).toBe(2);
+
+  basefs.deleteSubscription(subId);
   expect(basefs.getSubscriptions()).toHaveLength(0);
+
+  const relCountAfter = (
+    testDb.prepare(
+      "SELECT COUNT(*) as cnt FROM subscription_tags WHERE subscription_id = ?",
+    ).get(subId) as { cnt: number }
+  ).cnt;
+  expect(relCountAfter).toBe(0);
 });
 
 test("deleteSubscription does not throw when id does not exist", () => {
