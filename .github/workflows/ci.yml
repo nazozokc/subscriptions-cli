@@ -12,10 +12,6 @@ on:
       - "subtrack/**"
       - ".github/workflows/**"
 
-defaults:
-  run:
-    working-directory: ./subtrack
-
 jobs:
   test:
     strategy:
@@ -34,17 +30,32 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
-          cache-dependency-path: "subtrack/pnpm-lock.yaml"
+
+      - name: Get pnpm store path
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('subtrack/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - run: pnpm install --frozen-lockfile
+        working-directory: ./subtrack
 
       - run: pnpm build
+        working-directory: ./subtrack
 
       - run: pnpm test
+        working-directory: ./subtrack
 
       - name: Verify CLI starts (built binary)
         run: node dist/index.mjs --help
+        working-directory: ./subtrack
 
       - name: Verify CLI list command (dev mode)
         run: pnpm start list
+        working-directory: ./subtrack
