@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - "subsc-cli/**"
+      - "subtrack/**"
       - ".github/workflows/**"
   pull_request:
     branches: [main]
     paths:
-      - "subsc-cli/**"
+      - "subtrack/**"
       - ".github/workflows/**"
 
 defaults:
   run:
-    working-directory: ./subsc-cli
+    working-directory: ./subtrack
 
 jobs:
   test:
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          cache-dependency-path: "subsc-cli/pnpm-lock.yaml"
+          cache-dependency-path: "subtrack/pnpm-lock.yaml"
 
       - run: pnpm install --frozen-lockfile
 
