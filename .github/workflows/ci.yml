@@ -59,3 +59,10 @@ jobs:
       - name: Verify CLI list command (dev mode)
         run: pnpm start list
         working-directory: ./subtrack
+
+      - name: Spell check with typos
+        if: runner.os == 'Linux'
+        uses: crate-ci/typos@v1.47.2
+        with:
+          files: subtrack/
+          config: subtrack/typos.toml
