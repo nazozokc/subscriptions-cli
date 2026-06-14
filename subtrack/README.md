@@ -1,4 +1,4 @@
-# subsc-cli
+# subtrack
 
 A CLI tool to manage your subscription services from the terminal.
 
@@ -12,24 +12,24 @@ A CLI tool to manage your subscription services from the terminal.
 
 ```bash
 # List all subscriptions
-bunx subsc-cli list
+bunx subtrack list
 
 # Add a new subscription (interactive prompts)
-bunx subsc-cli add
+bunx subtrack add
 
 # Delete a subscription by ID
-bunx subsc-cli delete <id>
+bunx subtrack delete <id>
 
 # List tags subscriptions
-bunx subsc-cli tags <tags>
+bunx subtrack tags <tags>
 ```
 
 > [!TIP]
-> The binary name is `subsc-cli`. Run via `bunx subsc-cli <command>` after `bun install`.
+> The binary name is `subtrack`. Run via `bunx subtrack <command>` after `bun install`.
 
 ## Data
 
-Subscriptions are stored in `~/.config/subscription-cli/subscription.json`.
+Subscriptions are stored in `~/.config/subtrack/subtrack.db`.
 
 ## Development
 

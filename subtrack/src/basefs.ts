@@ -18,7 +18,9 @@ export type AddSharedArgs = Omit<SharedArgs, "id">;
 let _db: Database | null = null;
 
 function getDbDir(): string {
-  return process.env.SUBSC_CLI_DB_DIR ?? path.join(homedir(), ".config", "subsc-cli");
+  return (
+    process.env.SUBSC_CLI_DB_DIR ?? path.join(homedir(), ".config", "subtrack")
+  );
 }
 
 function getDb(): Database {
@@ -27,7 +29,7 @@ function getDb(): Database {
   const dbdir = getDbDir();
   mkdirSync(dbdir, { recursive: true });
 
-  _db = new Database(path.join(dbdir, "subscriptions.db"));
+  _db = new Database(path.join(dbdir, "subtrack.db"));
   _db.pragma("journal_mode = WAL");
   _db.pragma("foreign_keys = ON");
 
@@ -110,7 +112,7 @@ export const getSubscriptions = (): SharedArgs[] => {
 export const writeSubscription = (data: AddSharedArgs): void => {
   try {
     const db = getDb();
-    const uniqueTags = Array.from(new Set(data.tags))
+    const uniqueTags = Array.from(new Set(data.tags));
 
     const writeTx = db.transaction(() => {
       const insertSub = db.prepare(`
@@ -160,9 +162,7 @@ export const writeSubscription = (data: AddSharedArgs): void => {
 export const deleteSubscription = (id: number): void => {
   try {
     const db = getDb();
-    const result = db
-      .prepare("DELETE FROM subscriptions WHERE id = ?")
-      .run(id);
+    const result = db.prepare("DELETE FROM subscriptions WHERE id = ?").run(id);
 
     if (result.changes === 0) {
       consola.warn(`No subscription found with id ${id}`);
